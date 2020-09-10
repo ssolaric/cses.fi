@@ -1,25 +1,38 @@
-// A Sliding Window problem, similar to https://leetcode.com/problems/longest-substring-without-repeating-characters/
-use std::collections::HashMap;
 use std::io;
 use std::str;
 
-fn solve<R: io::BufRead, W: io::Write>(scan: &mut Scanner<R>, out: &mut W) {
-    let n: usize = scan.token();
-    let arr: Vec<i32> = scan.tokens();
-
-    let mut counter = HashMap::new();
-    let mut i = 0;
-    let mut j = 0;
-    let mut ans = 0;
-    while j < n {
-        *counter.entry(&arr[j]).or_insert(0) += 1;
-        while counter[&arr[j]] > 1 {
-            *counter.entry(&arr[i]).or_insert(0) -= 1;
-            i += 1;
+fn upper_bound(arr: &[i32], target: i32) -> usize {
+    let n = arr.len();
+    let mut lo = 0;
+    let mut hi = n;
+    while lo < hi {
+        let mid = lo + (hi - lo) / 2;
+        if arr[mid] > target {
+            hi = mid;
+        } else {
+            lo = mid + 1;
         }
-        ans = ans.max(j - i + 1);
-        j += 1;
     }
+    lo
+}
+
+fn minimize_towers(arr: &[i32]) -> usize {
+    let mut towers = Vec::new();
+    for &x in arr {
+        let ind = upper_bound(&towers, x);
+        if ind == towers.len() {
+            towers.push(x);
+        } else {
+            towers[ind] = x;
+        }
+    }
+    towers.len()
+}
+
+fn solve<R: io::BufRead, W: io::Write>(scan: &mut Scanner<R>, out: &mut W) {
+    let _: usize = scan.token();
+    let arr: Vec<i32> = scan.tokens();
+    let ans = minimize_towers(&arr);
     writeln!(out, "{}", ans).ok();
 }
 
