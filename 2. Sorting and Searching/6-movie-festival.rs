@@ -37,9 +37,9 @@ fn solve<R: io::BufRead, W: io::Write>(scan: &mut Scanner<R>, out: &mut W) {
     }
     intervals.sort_by_key(|i| i.1);
 
-    let mut ans = 1;
-    let mut end = intervals[0].1;
-    for i in 1..n {
+    let mut ans = 0;
+    let mut end = -1;
+    for i in 0..n {
         if intervals[i].0 >= end {
             ans += 1;
             end = intervals[i].1;
